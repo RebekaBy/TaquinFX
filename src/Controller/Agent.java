@@ -12,6 +12,7 @@ public class Agent extends Thread{
     private int id;
 
     private Direction d;
+    private int date;
 
     private Position positionCurrent, positionFinal;
     private Queue<Message> boiteAuxLettres;
@@ -21,6 +22,7 @@ public class Agent extends Thread{
         this.e = e;
         this.positionCurrent = positionCurrent;
         this.positionFinal = positionFinal;
+        date= 0;
     }
 
     /*
@@ -40,8 +42,15 @@ public class Agent extends Thread{
     // Utilisation de A* pour savoir quel est le meilleur chemin pour aller à la position final
     public Direction raisonner(){
         Astar as = new Astar();
-        Position nextPosition = as.cheminPlusCourt(e, this);
-        if(nextPosition != null){
+        Position nextPosition = as.cheminPlusCourt(e, this, true);
+        if(nextPosition.equals(positionCurrent)){
+            nextPosition = as.cheminPlusCourt(e, this, false);
+            Agent a = e.getContent(nextPosition);
+            if(a != null){
+                a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
+            }
+        }
+        else{
             return findDirection(nextPosition);
         }
         return null;
@@ -99,6 +108,13 @@ public class Agent extends Thread{
         this.positionFinal = positionFinal;
     }
 
+    public void addBoiteAuxLettres(Message m){
+        boiteAuxLettres.add(m);
+    }
+
+    public int getDate() {
+        return date;
+    }
 
     //Vérifie si y'a un agent ou pas sur la position voulue
     public boolean isCaseLibre(Environnement e,Position p){

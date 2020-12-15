@@ -10,6 +10,7 @@ import java.util.*;
 public class Astar {
     private Environnement e;
     private Noeud objectif;
+    private Boolean eviterAgents;
 
 //    public int compare2Noeuds(Noeud n1, Noeud n2){
 //        if(n1.getHeuristique() < n2.getHeuristique()){
@@ -21,8 +22,9 @@ public class Astar {
 //        }
 //    }
 
-    public Position cheminPlusCourt(Environnement e, Agent a){
+    public Position cheminPlusCourt(Environnement e, Agent a, Boolean eviterAgents){
         this.e = e;
+        this.eviterAgents = eviterAgents;
         objectif = new Noeud(a.getPositionFinal(), 0, 0);
 
         Queue<Noeud> closedList = new LinkedList<>();
@@ -103,7 +105,11 @@ public class Astar {
         if(p.getX() < 0 || p.getX() >= e.getN() || p.getY() < 0 || p.getY() >= e.getN()){
             return null;
         }
-        if(e.getContent(p) == null){
+        if(eviterAgents) {
+            if (e.getContent(p) == null) {
+                return new Noeud(p, objectif, cout);
+            }
+        }else{
             return new Noeud(p, objectif, cout);
         }
         return null;
