@@ -19,4 +19,12 @@ public class Message {
         this.action = action;
         this.parametre = parametre;
     }
+
+    public String getAction() {
+        return action;
+    }
+
+    public Agent getEmmeteur() {
+        return emmeteur;
+    }
 }

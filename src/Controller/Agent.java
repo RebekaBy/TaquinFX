@@ -57,9 +57,60 @@ public class Agent extends Thread{
     }
 
     public void decider(){
+        if(isPlacedGood()){
+            Position tmpPosition = lireMessages();
+            if(tmpPosition == null){
+                d = null;
+            }else{
+                Agent a = e.getContent(tmpPosition);
+                if(a != null){
+                    a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
+                    d = null;
+                }else{
+                    d = findDirection(tmpPosition);
+                }
+            }
+        }else{
+            d = raisonner();
+        }
+        boiteAuxLettres.clear();
         if(d != null){
             seDeplacer();
         }
+    }
+
+    public Position lireMessages(){
+        for(Message m : boiteAuxLettres){
+            if(m.getAction().equals("Move")){
+                return findCaseVoisine(m.getEmmeteur());
+            }
+        }
+        return null;
+    }
+
+    public Position findCaseVoisine(Agent a){
+        Position tmpPosition;
+        for(Direction direction: Direction.values()){
+            tmpPosition = e.calcPosition(positionCurrent, direction);
+            if(isCaseDisponible(tmpPosition, a)){
+                return tmpPosition;
+            }
+        }
+
+        Direction rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
+        tmpPosition = e.calcPosition(positionCurrent, rand);;
+        while(!isCaseDisponible(tmpPosition, a)){
+            rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
+            tmpPosition = e.calcPosition(positionCurrent, rand);;
+        }
+        return tmpPosition;
+    }
+
+    public Boolean isCaseDisponible(Position p, Agent a){
+        if(!p.equals(a.positionCurrent)){
+            return e.getContent(p) == null;
+        }
+        return false;
     }
 
     public void appliquer(){
