@@ -252,7 +252,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
 
-        Environnement e = new Environnement(5, 10);
+        Environnement e = new Environnement(3, 6);
         e.runAgents();
 
     }
