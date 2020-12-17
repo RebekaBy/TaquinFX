@@ -4,8 +4,10 @@ package Controller;
 import Astar.Astar;
 
 import java.security.PrivateKey;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.SortedSet;
 
 public class Agent extends Thread{
     private Environnement e;
@@ -18,11 +20,13 @@ public class Agent extends Thread{
     private Queue<Message> boiteAuxLettres;
 
 
-    public Agent(Environnement e, Position positionCurrent, Position positionFinal) {
+    public Agent(int id, Environnement e, Position positionCurrent, Position positionFinal) {
         this.e = e;
+        this.id = id;
         this.positionCurrent = positionCurrent;
         this.positionFinal = positionFinal;
         date= 0;
+        boiteAuxLettres = new LinkedList<>();
     }
 
     /*
@@ -41,6 +45,7 @@ public class Agent extends Thread{
     //TODO LOUIS AVEC A*
     // Utilisation de A* pour savoir quel est le meilleur chemin pour aller à la position final
     public Direction raisonner(){
+//        System.out.println("raisonner");
         Astar as = new Astar();
         Position nextPosition = as.cheminPlusCourt(e, this, true);
         if(nextPosition.equals(positionCurrent)){
@@ -57,7 +62,9 @@ public class Agent extends Thread{
     }
 
     public void decider(){
+//        System.out.println("decider");
         if(isPlacedGood()){
+            System.out.println("Agent " + id + " - Iteration : " + date + " - Bien place ! ");
             Position tmpPosition = lireMessages();
             if(tmpPosition == null){
                 d = null;
@@ -73,7 +80,7 @@ public class Agent extends Thread{
         }else{
             d = raisonner();
         }
-        boiteAuxLettres.clear();
+        boiteAuxLettres = new LinkedList<>();
         if(d != null){
             seDeplacer();
         }
@@ -113,15 +120,13 @@ public class Agent extends Thread{
         return false;
     }
 
-    public void appliquer(){
-
-    }
-
     @Override
     public void run() {
         while(!e.isTaquinOk()){
+//            System.out.println("Agent " + id + " - Iteration : " + date);
             d = null;
             decider();
+            date++;
         }
     }
 

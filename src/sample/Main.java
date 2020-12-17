@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import Controller.Environnement;
 
 public class Main extends Application {
 
@@ -304,7 +305,13 @@ public class Main extends Application {
 
 
 
+
+
     public static void main(String[] args) {
         launch(args);
+
+        Environnement e = new Environnement(5, 10);
+        e.runAgents();
+
     }
 }

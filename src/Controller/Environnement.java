@@ -1,6 +1,7 @@
 package Controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
@@ -16,16 +17,33 @@ public class Environnement {
     public Environnement(int n, int nbAgents){
         this.n = n;
         this.nbAgents = nbAgents;
+
+        plateau = new Agent[n][n];
+        listeAgents = new ArrayList<>();
+        semaphore = new Semaphore(1);
+        initPlateau();
+        initialisationAgents();
     }
 
-    public List<Agent> initialisationAgents(int nbAgents){
+    public void initPlateau(){
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                plateau[i][j] = null;
+            }
+        }
+    }
+
+    public void initialisationAgents(){
         Random r = new Random();
-        Position p;
+        Position p, pFinal;
+        Agent a;
         for (int i = 0; i <nbAgents; i++){
             p = new Position(r.nextInt(n), r.nextInt(n));
-            listeAgents.add(new Agent(this, p, p));
+            pFinal = new Position(i%n, i/n);
+            a = new Agent(i, this, p, pFinal);
+            listeAgents.add(a);
+            plateau[p.getX()][p.getY()] = a;
         }
-        return listeAgents;
     }
 
     public void runAgents(){
@@ -36,10 +54,18 @@ public class Environnement {
     }
 
     public Agent getContent(Position p){
-        if(p.getX() < 0 || p.getX() >= n || p.getY() < 0 || p.getY() >= n){
-            return null;
+        try {
+            semaphore.acquire();
+            if(p.getX() < 0 || p.getX() >= n || p.getY() < 0 || p.getY() >= n){
+                semaphore.release();
+                return null;
+            }
+            semaphore.release();
+            return plateau[p.getX()][p.getY()];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return plateau[p.getX()][p.getY()];
+        return null;
     }
 
     public int getN() {
@@ -47,12 +73,21 @@ public class Environnement {
     }
 
     public boolean isTaquinOk(){
-        for(Agent a: listeAgents){
-            if(!a.isPlacedGood()){
-                return false;
+        try {
+            semaphore.acquire();
+            for(Agent a: listeAgents){
+                if(!a.isPlacedGood()){
+                    semaphore.release();
+                    return false;
+                }
             }
+            System.out.println("OKTAQUINOK");
+            semaphore.release();
+            return true;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     public void deplacer(Agent a, Direction d){
