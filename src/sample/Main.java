@@ -2,7 +2,6 @@ package sample;
 
 import Controller.Environnement;
 import View.Cell;
-import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -10,13 +9,8 @@ import javafx.scene.Scene;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -92,7 +86,6 @@ public class Main extends Application {
             if (imageView == null)
                 continue;
 
-
             // position images on scene
             imageView.relocate(cell.getLayoutX(), cell.getLayoutY());
 
@@ -140,112 +133,6 @@ public class Main extends Application {
         cellB.setImageView(tmp);
 
     }
-
-    public boolean checkSolved() {
-
-        boolean allSolved = true;
-
-        for (Cell cell : cells) {
-
-            if (!cell.isSolved()) {
-                allSolved = false;
-                break;
-            }
-        }
-
-        System.out.println("Solved: " + allSolved);
-
-        return allSolved;
-    }
-
-    public void moveCell(Node node) {
-
-        // get current cell using the selected node (imageview)
-        Cell currentCell = null;
-        for (Cell tmpCell : cells) {
-            if (tmpCell.getImageView() == node) {
-                currentCell = tmpCell;
-                break;
-            }
-        }
-
-        if (currentCell == null)
-            return;
-
-        // get empty cell
-        Cell emptyCell = null;
-
-        for (Cell tmpCell : cells) {
-            if (tmpCell.isEmpty()) {
-                emptyCell = tmpCell;
-                break;
-            }
-        }
-
-        if (emptyCell == null)
-            return;
-
-        // check if cells are swappable: neighbor distance either x or y must be 1 for a valid move
-        int steps = Math.abs(currentCell.getX() - emptyCell.getX()) + Math.abs(currentCell.getY() - emptyCell.getY());
-        if (steps != 1)
-            return;
-
-        System.out.println("Transition: " + currentCell + " -> " + emptyCell);
-
-        // cells are swappable => create path transition
-        Path path = new Path();
-        path.getElements().add(new MoveToAbs(currentCell.getImageView(), currentCell.getLayoutX(), currentCell.getLayoutY()));
-        path.getElements().add(new LineToAbs(currentCell.getImageView(), emptyCell.getLayoutX(), emptyCell.getLayoutY()));
-
-        PathTransition pathTransition = new PathTransition();
-        pathTransition.setDuration(Duration.millis(100));
-        pathTransition.setNode(currentCell.getImageView());
-        pathTransition.setPath(path);
-        pathTransition.setOrientation(PathTransition.OrientationType.NONE);
-        pathTransition.setCycleCount(1);
-        pathTransition.setAutoReverse(false);
-
-        final Cell cellA = currentCell;
-        final Cell cellB = emptyCell;
-        pathTransition.setOnFinished(actionEvent -> {
-
-            swap( cellA, cellB);
-
-            checkSolved();
-
-        });
-
-        pathTransition.play();
-
-    }
-
-
-
-    // absolute (layoutX/Y) transitions using the pathtransition for MoveTo
-    public static class MoveToAbs extends MoveTo {
-
-        public MoveToAbs(Node node) {
-            super(node.getLayoutBounds().getWidth() / 2, node.getLayoutBounds().getHeight() / 2);
-        }
-
-        public MoveToAbs(Node node, double x, double y) {
-            super(x - node.getLayoutX() + node.getLayoutBounds().getWidth() / 2, y - node.getLayoutY() + node.getLayoutBounds().getHeight() / 2);
-        }
-
-    }
-
-    // absolute (layoutX/Y) transitions using the pathtransition for LineTo
-    public static class LineToAbs extends LineTo {
-
-        public LineToAbs(Node node, double x, double y) {
-            super(x - node.getLayoutX() + node.getLayoutBounds().getWidth() / 2, y - node.getLayoutY() + node.getLayoutBounds().getHeight() / 2);
-        }
-
-    }
-
-
-
-
 
 
 
