@@ -2,12 +2,15 @@ package Controller;
 
 
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 public class Environnement {
     private Agent[][] plateau;
     private int n;
     private int nbAgents;
     private List<Agent> listeAgents;
+    private Semaphore semaphore;
 
 
     public Environnement(int n, int nbAgents){
@@ -16,10 +19,20 @@ public class Environnement {
     }
 
     public List<Agent> initialisationAgents(int nbAgents){
+        Random r = new Random();
+        Position p;
         for (int i = 0; i <nbAgents; i++){
-
+            p = new Position(r.nextInt(n), r.nextInt(n));
+            listeAgents.add(new Agent(this, p, p));
         }
         return listeAgents;
+    }
+
+    public void runAgents(){
+        for(Agent a: listeAgents){
+            a.start();
+//            a.join();
+        }
     }
 
     public Agent getContent(Position p){
@@ -43,15 +56,21 @@ public class Environnement {
     }
 
     public void deplacer(Agent a, Direction d){
-        Position p = a.getPositionCurrent();
+        try {
+            semaphore.acquire();
+            Position p = a.getPositionCurrent();
 
-        plateau[p.getX()][p.getY()] = null;
+            plateau[p.getX()][p.getY()] = null;
 
-        Position newP = calcPosition(p,d);
+            Position newP = calcPosition(p,d);
 
-        a.setPositionCurrent(newP);
+            a.setPositionCurrent(newP);
 
-        plateau[newP.getX()][newP.getY()] = a;
+            plateau[newP.getX()][newP.getY()] = a;
+            semaphore.release();
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
     }
 
     //Détermine la position de l'agent apres déplacement dans la direction

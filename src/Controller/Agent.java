@@ -121,7 +121,6 @@ public class Agent extends Thread{
     public void run() {
         while(!e.isTaquinOk()){
             d = null;
-            d = raisonner();
             decider();
         }
     }
