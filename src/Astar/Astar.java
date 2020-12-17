@@ -23,6 +23,7 @@ public class Astar {
 //    }
 
     public Position cheminPlusCourt(Environnement e, Agent a, Boolean eviterAgents){
+//        System.out.println("cheminpluscourt");
         this.e = e;
         this.eviterAgents = eviterAgents;
         objectif = new Noeud(a.getPositionFinal(), 0, 0);
@@ -33,7 +34,9 @@ public class Astar {
         Noeud u;
 
         while (!openList.isEmpty()){
+//            System.out.println(openList.size());
             u = openList.first();
+            openList.remove(u);
             if(u.compareTo(objectif) == 0){
                 return reconstituerChemin(u);
             }
@@ -68,6 +71,8 @@ public class Astar {
 
     //reconsitue le chemin de n au dernier parent connu, retourne la premier position pour l'atteindre
     public Position reconstituerChemin(Noeud n){
+//        System.out.println("reconsituerChemin");
+
         Noeud suivant = n;
         while(n.getParent() != null){
             suivant = n;
