@@ -1,6 +1,9 @@
 package Controller;
 
 
+import View.Cell;
+import javafx.scene.image.ImageView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,14 +16,17 @@ public class Environnement {
     private List<Agent> listeAgents;
     private Semaphore semaphore;
 
+    private List<Cell> cells;
 
-    public Environnement(int n, int nbAgents){
+
+    public Environnement(int n, int nbAgents, List<Cell> cells){
         this.n = n;
         this.nbAgents = nbAgents;
 
         plateau = new Agent[n][n];
         listeAgents = new ArrayList<>();
         semaphore = new Semaphore(1);
+        this.cells = cells;
         initPlateau();
         initialisationAgents();
     }
@@ -39,11 +45,16 @@ public class Environnement {
         Agent a;
         for (int i = 0; i <nbAgents; i++){
             p = new Position(r.nextInt(n), r.nextInt(n));
+            while(plateau[p.getX()][p.getY()] != null){
+                p = new Position(r.nextInt(n), r.nextInt(n));
+            }
             pFinal = new Position(i%n, i/n);
-            a = new Agent(i, this, p, pFinal);
+            a = new Agent(i, this, p, pFinal, cells.get(i));
             listeAgents.add(a);
             plateau[p.getX()][p.getY()] = a;
+
         }
+        System.out.println(listeAgents.size());
     }
 
     public void runAgents(){
@@ -120,5 +131,12 @@ public class Environnement {
             default:
                 return new Position(p.getX()+1, p.getY());
         }
+    }
+
+    public ImageView getAgentImage(int x, int y){
+        if(plateau[x][y] == null){
+            return null;
+        }
+        return plateau[x][y].getCell().getImageView();
     }
 }

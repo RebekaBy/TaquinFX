@@ -2,6 +2,7 @@ package Controller;
 
 
 import Astar.Astar;
+import View.Cell;
 
 import java.security.PrivateKey;
 import java.util.LinkedList;
@@ -18,15 +19,17 @@ public class Agent extends Thread{
 
     private Position positionCurrent, positionFinal;
     private Queue<Message> boiteAuxLettres;
+    private Cell cell;
 
 
-    public Agent(int id, Environnement e, Position positionCurrent, Position positionFinal) {
+    public Agent(int id, Environnement e, Position positionCurrent, Position positionFinal, Cell c) {
         this.e = e;
         this.id = id;
         this.positionCurrent = positionCurrent;
         this.positionFinal = positionFinal;
         date= 0;
         boiteAuxLettres = new LinkedList<>();
+        this.cell = c;
     }
 
     /*
@@ -209,5 +212,9 @@ public class Agent extends Thread{
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Cell getCell() {
+        return cell;
     }
 }

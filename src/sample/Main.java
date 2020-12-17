@@ -1,6 +1,7 @@
 package sample;
 
 import Controller.Environnement;
+import Controller.Agent;
 import View.Cell;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -23,9 +24,12 @@ public class Main extends Application {
     private static double SCENE_WIDTH = 500;
     private static double SCENE_HEIGHT = 500;
 
+    private static int size = 5;
+    private static int nbAgents = 10;
+
     //Dimension du taquin
-    public static int TILE_ROW_COUNT = 3;
-    public static int TILE_COLUMN_COUNT = 3;
+    public static int TILE_ROW_COUNT = size;
+    public static int TILE_COLUMN_COUNT = size;
     public static double TILE_SIZE = 100;
 
     public static double offsetX = (SCENE_WIDTH - TILE_ROW_COUNT * TILE_SIZE) / 2;
@@ -61,35 +65,53 @@ public class Main extends Application {
                 tile.setViewport(rect);
 
                 // consider empty cell, let it remain empty
-                if (x == (TILE_ROW_COUNT - 1) && y == (TILE_COLUMN_COUNT - 1)) {
-                    tile = null;
-                }
+//                if (x == (TILE_ROW_COUNT - 1) && y == (TILE_COLUMN_COUNT - 1)) {
+//                    tile = null;
+//                }
 
                 cells.add(new Cell(x, y, tile));
             }
         }
 
         // shuffle cells
-        shuffle();
+//        shuffle();
+
+        //Itialisation de l'environnement
+        Environnement e = new Environnement(size, nbAgents, cells);
 
         // create playfield
         Pane pane = new Pane();
 
-        // put tiles on playfield, assign event handler
-        for (int i = 0; i < cells.size(); i++) {
+//        // put tiles on playfield, assign event handler
+//        for (int i = 0; i < cells.size(); i++) {
+//
+//            Cell cell = cells.get(i);
+//
+//            Node imageView = cell.getImageView();
+//
+//            // consider empty cell
+//            if (imageView == null)
+//                continue;
+//
+//            // position images on scene
+//            imageView.relocate(cell.getLayoutX(), cell.getLayoutY());
+//
+//            pane.getChildren().add(cell.getImageView());
+//        }
 
-            Cell cell = cells.get(i);
+        //générer récupérer les cells dans l'environnement
 
-            Node imageView = cell.getImageView();
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
 
-            // consider empty cell
-            if (imageView == null)
-                continue;
+                Node imageView = e.getAgentImage(i, j);
+                if (imageView == null)
+                    continue;
 
-            // position images on scene
-            imageView.relocate(cell.getLayoutX(), cell.getLayoutY());
+                imageView.relocate(TILE_SIZE * i, TILE_SIZE * j);
+                pane.getChildren().add(imageView);
 
-            pane.getChildren().add(cell.getImageView());
+            }
         }
 
 
@@ -99,6 +121,9 @@ public class Main extends Application {
         primaryStage.show();
 
         primaryStage.show();
+
+
+//        e.runAgents();
     }
 
     /**
@@ -139,8 +164,6 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
 
-        Environnement e = new Environnement(3, 6);
-        e.runAgents();
 
     }
 }
