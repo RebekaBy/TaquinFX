@@ -1,36 +1,28 @@
 package sample;
 
+import Controller.Environnement;
+import View.Cell;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Cell;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import Controller.Environnement;
 
 public class Main extends Application {
 
@@ -57,9 +49,9 @@ public class Main extends Application {
         }
     }
 
-
-
     List<Cell> cells = new ArrayList<>();
+
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("board.fxml"));
@@ -100,12 +92,6 @@ public class Main extends Application {
             if (imageView == null)
                 continue;
 
-            // click-handler: swap tiles, check if puzzle is solved
-            imageView.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-
-                moveCell((Node) mouseEvent.getSource());
-
-            });
 
             // position images on scene
             imageView.relocate(cell.getLayoutX(), cell.getLayoutY());
@@ -200,7 +186,7 @@ public class Main extends Application {
             return;
 
         // check if cells are swappable: neighbor distance either x or y must be 1 for a valid move
-        int steps = Math.abs(currentCell.x - emptyCell.x) + Math.abs(currentCell.y - emptyCell.y);
+        int steps = Math.abs(currentCell.getX() - emptyCell.getX()) + Math.abs(currentCell.getY() - emptyCell.getY());
         if (steps != 1)
             return;
 
@@ -233,51 +219,7 @@ public class Main extends Application {
 
     }
 
-    private static class Cell {
 
-        int x;
-        int y;
-
-        ImageView initialImageView;
-        ImageView currentImageView;
-
-        public Cell(int x, int y, ImageView initialImageView) {
-            super();
-            this.x = x;
-            this.y = y;
-            this.initialImageView = initialImageView;
-            this.currentImageView = initialImageView;
-        }
-
-        public double getLayoutX() {
-            return x * TILE_SIZE + offsetX;
-        }
-
-        public double getLayoutY() {
-            return y * TILE_SIZE + offsetY;
-        }
-
-        public ImageView getImageView() {
-            return currentImageView;
-        }
-
-        public void setImageView(ImageView imageView) {
-            this.currentImageView = imageView;
-        }
-
-        public boolean isEmpty() {
-            return currentImageView == null;
-        }
-
-        public boolean isSolved() {
-            return this.initialImageView == currentImageView;
-        }
-
-        public String toString() {
-            return "[" + x + "," + y + "]";
-        }
-
-    }
 
     // absolute (layoutX/Y) transitions using the pathtransition for MoveTo
     public static class MoveToAbs extends MoveTo {
