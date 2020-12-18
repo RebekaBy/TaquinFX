@@ -109,7 +109,7 @@ public class Astar {
         return voisins;
     }
 
-    //retourne le noeud voisins ou null si le voisins n'existe pas 
+    //retourne le noeud voisins ou null si le voisins n'existe pas
     public Noeud getVoisin(Position p, int cout) {
         if(p.getX() < 0 || p.getX() >= e.getN() || p.getY() < 0 || p.getY() >= e.getN()){
             return null;
