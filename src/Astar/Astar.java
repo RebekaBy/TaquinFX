@@ -103,7 +103,7 @@ public class Astar {
         voisins.add(getVoisin(new Position(n.getX(), n.getY()+1), n.getCout()));
         voisins.add(getVoisin(new Position(n.getX(), n.getY()-1), n.getCout()));
 
-        return new ArrayList<>();
+        return voisins;
     }
 
     public Noeud getVoisin(Position p, int cout) {

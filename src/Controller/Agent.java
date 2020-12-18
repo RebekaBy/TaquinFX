@@ -37,6 +37,7 @@ public class Agent extends Thread{
     on se déplace vers la case choisie
     */
     public void seDeplacer(){
+        System.out.println("Agent " + id + " - Iteration : " + date + " - Deplace ! ");
         e.deplacer(this, d);
     }
 
@@ -67,7 +68,7 @@ public class Agent extends Thread{
     public void decider(){
 //        System.out.println("decider");
         if(isPlacedGood()){
-            System.out.println("Agent " + id + " - Iteration : " + date + " - Bien place ! ");
+//            System.out.println("Agent " + id + " - Iteration : " + date + " - Bien place ! ");
             Position tmpPosition = lireMessages();
             if(tmpPosition == null){
                 d = null;
@@ -84,6 +85,7 @@ public class Agent extends Thread{
             d = raisonner();
         }
         boiteAuxLettres = new LinkedList<>();
+//        System.out.println(d);
         if(d != null){
             seDeplacer();
         }
@@ -117,11 +119,15 @@ public class Agent extends Thread{
     }
 
     public Boolean isCaseDisponible(Position p, Agent a){
+        if(!e.isPositionInside(p)){
+            return false;
+        }
         if(!p.equals(a.positionCurrent)){
             return e.getContent(p) == null;
         }
         return false;
     }
+
 
     @Override
     public void run() {
