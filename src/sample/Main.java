@@ -4,6 +4,7 @@ import Controller.Environnement;
 import Controller.Agent;
 import View.Cell;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -48,7 +49,6 @@ public class Main extends Application {
     }
 
     List<Cell> cells = new ArrayList<>();
-
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -100,19 +100,26 @@ public class Main extends Application {
 //        }
 
         //générer récupérer les cells dans l'environnement
+        Platform.runLater(new Runnable(){
+            @Override
+            public void run() {
+                for(int i = 0; i < size; i++){
+                    for(int j = 0; j < size; j++){
 
-        for(int i = 0; i < size; i++){
-            for(int j = 0; j < size; j++){
+                        Node imageView = e.getAgentImage(i, j);
+                        if (imageView == null)
+                            continue;
 
-                Node imageView = e.getAgentImage(i, j);
-                if (imageView == null)
-                    continue;
+                        imageView.relocate(TILE_SIZE * i, TILE_SIZE * j);
+                        pane.getChildren().add(imageView);
 
-                imageView.relocate(TILE_SIZE * i, TILE_SIZE * j);
-                pane.getChildren().add(imageView);
-
+                    }
+                }
             }
-        }
+        });
+
+
+
 
 
         Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
