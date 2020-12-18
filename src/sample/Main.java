@@ -26,7 +26,7 @@ public class Main extends Application {
     private static double SCENE_HEIGHT = 500;
 
     private static int size = 3;
-    private static int nbAgents = 5;
+    private static int nbAgents = 1;
 
     private static int ImageSize = 500;
 
@@ -45,7 +45,9 @@ public class Main extends Application {
     private Image image;
 
     private List<Cell> cells;
-    
+
+    private Environnement env;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -83,7 +85,7 @@ public class Main extends Application {
 //        shuffle();
 
         //Itialisation de l'environnement
-        Environnement e = new Environnement(size, nbAgents, cells, this);
+        env = new Environnement(size, nbAgents, cells, this);
 
         // create playfield
 //        Pane pane = new Pane();
@@ -139,7 +141,7 @@ public class Main extends Application {
         updateView();
 
 
-        e.runAgents();
+        env.runAgents();
     }
 
     public void updateView(){
@@ -167,6 +169,8 @@ public class Main extends Application {
 
         primaryStage.show();
     }
+
+
 
     public static void main(String[] args) {
         launch(args);

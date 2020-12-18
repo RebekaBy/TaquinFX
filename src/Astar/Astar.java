@@ -37,17 +37,19 @@ public class Astar {
 //            System.out.println(openList.size());
             u = openList.first();
             openList.remove(u);
-            if(u.compareTo(objectif) == 0){
+            if(u.equals(objectif)){
                 return reconstituerChemin(u);
             }
             for(Noeud v : getVoisins(u)){
                 if(v != null){
-                    if(!(closedList.contains(v) || existInWithLowerCost(openList, v))){
-                        v.setCout(u.getCout() + 1);
-                        v.setDistance(v.calcDistance(objectif));
-                        v.setHeuristique(v.getCout() + v.getDistance());
-                        openList.add(v);
-                        v.setParent(u);
+                    if(!closedList.contains(v)) {
+                        if (!existInWithLowerCost(openList, v)) {
+                            v.setCout(u.getCout() + 1);
+                            v.setDistance(v.calcDistance(objectif));
+                            v.setHeuristique(v.getCout() + v.getDistance());
+                            openList.add(v);
+                            v.setParent(u);
+                        }
                     }
                 }
             }
@@ -82,7 +84,7 @@ public class Astar {
     }
 
 
-
+//vérifie si l'agent existe dans la liste avec un cout plus faible
     public boolean existInWithLowerCost(SortedSet<Noeud> openList, Noeud n){
         if(openList.contains(n)){
             for(Noeud row : openList){
@@ -96,6 +98,7 @@ public class Astar {
         return false;
     }
 
+    //trouve les voisins du noeud
     public List<Noeud> getVoisins(Noeud n){
         List<Noeud> voisins = new ArrayList<>();
         voisins.add(getVoisin(new Position(n.getX()+1, n.getY()), n.getCout()));
@@ -106,6 +109,7 @@ public class Astar {
         return voisins;
     }
 
+    //retourne le noeud voisins ou null si le voisins n'existe pas 
     public Noeud getVoisin(Position p, int cout) {
         if(p.getX() < 0 || p.getX() >= e.getN() || p.getY() < 0 || p.getY() >= e.getN()){
             return null;

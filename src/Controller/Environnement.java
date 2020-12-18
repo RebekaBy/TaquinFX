@@ -3,8 +3,10 @@ package Controller;
 
 import View.Cell;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
+import sample.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +22,10 @@ public class Environnement {
 
     private List<Cell> cells;
 
-    public Application app;
+    public Main app;
 
 
-    public Environnement(int n, int nbAgents, List<Cell> cells, Application app){
+    public Environnement(int n, int nbAgents, List<Cell> cells, Main app){
         this.n = n;
         this.nbAgents = nbAgents;
 
@@ -62,10 +64,14 @@ public class Environnement {
     }
 
     public void runAgents(){
-        for(Agent a: listeAgents){
-            a.start();
-//            a.join();
-        }
+//        try {
+            for(Agent a: listeAgents){
+                a.start();
+//                a.join();
+            }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public Agent getContent(Position p){
@@ -117,6 +123,12 @@ public class Environnement {
             a.setPositionCurrent(newP);
 
             plateau[newP.getX()][newP.getY()] = a;
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    app.updateView();
+                }
+            });
             semaphore.release();
     } catch (InterruptedException e) {
         e.printStackTrace();

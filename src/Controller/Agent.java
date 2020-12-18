@@ -132,10 +132,16 @@ public class Agent extends Thread{
     @Override
     public void run() {
         while(!e.isTaquinOk()){
+
 //            System.out.println("Agent " + id + " - Iteration : " + date);
             d = null;
             decider();
             date++;
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
         }
     }
 
