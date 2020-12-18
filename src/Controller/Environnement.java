@@ -2,6 +2,7 @@ package Controller;
 
 
 import View.Cell;
+import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 
@@ -19,8 +20,10 @@ public class Environnement {
 
     private List<Cell> cells;
 
+    public Application app;
 
-    public Environnement(int n, int nbAgents, List<Cell> cells){
+
+    public Environnement(int n, int nbAgents, List<Cell> cells, Application app){
         this.n = n;
         this.nbAgents = nbAgents;
 
@@ -30,6 +33,7 @@ public class Environnement {
         this.cells = cells;
         initPlateau();
         initialisationAgents();
+        this.app = app;
     }
 
     public void initPlateau(){

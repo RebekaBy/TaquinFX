@@ -1,14 +1,10 @@
-package sample;
+package View;
 
 import Controller.Environnement;
-import Controller.Agent;
-import View.Cell;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -18,48 +14,56 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public class Main extends Application {
+public class View extends Application {
 
-    private static double SCENE_WIDTH = 500;
-    private static double SCENE_HEIGHT = 500;
+    private double SCENE_WIDTH = 500;
+    private double SCENE_HEIGHT = 500;
 
-    private static int size = 3;
-    private static int nbAgents = 5;
+    private int gridSize;
+    private int nbAgents;
 
-    private static int ImageSize = 500;
+    private int ImageSize;
 
     //Dimension du taquin
-    public static int TILE_ROW_COUNT = size;
-    public static int TILE_COLUMN_COUNT = size;
-    public static double TILE_SIZE = ImageSize/size;
+    public int TILE_ROW_COUNT;
+    public int TILE_COLUMN_COUNT;
+    public double TILE_SIZE;
 
-    public static double offsetX = (SCENE_WIDTH - TILE_ROW_COUNT * TILE_SIZE) / 2;
-    public static double offsetY = (SCENE_HEIGHT - TILE_COLUMN_COUNT * TILE_SIZE) / 2;
+    public double offsetX = (SCENE_WIDTH - TILE_ROW_COUNT * TILE_SIZE) / 2;
+    public double offsetY = (SCENE_HEIGHT - TILE_COLUMN_COUNT * TILE_SIZE) / 2;
 
     private Stage primaryStage;
 
     //Creation d'une image
-  //  private Image image = new Image("\".\\img\\sda.png\"",600,600,false,true);
+    //  private Image image = new Image("\".\\img\\sda.png\"",600,600,false,true);
     private Image image;
 
     private List<Cell> cells;
-    
+    private Environnement env;
+
+    public View(int gridSize, int nbAgents, String[] args){
+        try {
+            image = new Image(new FileInputStream(".\\img\\sda.png"), ImageSize, ImageSize, false,false);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        cells = new ArrayList<>();
+
+        this.gridSize =gridSize;
+        this.nbAgents = nbAgents;
+
+        TILE_ROW_COUNT = gridSize;
+        TILE_COLUMN_COUNT = gridSize;
+        TILE_SIZE = ImageSize/ gridSize;
+
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("board.fxml"));
 
         this.primaryStage = primaryStage;
-
-        try {
-            image = new Image(new FileInputStream(".\\img\\sda.png"), ImageSize, ImageSize, false,false);
-            //TILE_SIZE =image.getHeight();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        cells = new ArrayList<>();
 
         // create grid
         for (int x = 0; x < TILE_ROW_COUNT; x++) {
@@ -83,7 +87,7 @@ public class Main extends Application {
 //        shuffle();
 
         //Itialisation de l'environnement
-        Environnement e = new Environnement(size, nbAgents, cells, this);
+//        env = new Environnement(gridSize, nbAgents, cells);
 
         // create playfield
 //        Pane pane = new Pane();
@@ -139,15 +143,15 @@ public class Main extends Application {
         updateView();
 
 
-        e.runAgents();
+        env.runAgents();
     }
 
     public void updateView(){
         Pane pane = new Pane();
 
         // put tiles on playfield, assign event handler
-        for(int i = 0; i < size; i++){
-            for(int j = 0; j < size; j++){
+        for(int i = 0; i < gridSize; i++){
+            for(int j = 0; j < gridSize; j++){
 
                 Node imageView = env.getAgentImage(i, j);
                 if (imageView == null)
@@ -166,11 +170,5 @@ public class Main extends Application {
         primaryStage.show();
 
         primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-
-
     }
 }

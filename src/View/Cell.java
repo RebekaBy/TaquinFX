@@ -2,6 +2,8 @@ package View;
 
 import javafx.scene.image.ImageView;
 
+import java.util.Timer;
+
 import static sample.Main.*;
 
 public class Cell {
@@ -9,15 +11,23 @@ public class Cell {
     private int x;
     private int y;
 
-    ImageView initialImageView;
-    ImageView currentImageView;
+    private ImageView initialImageView;
+    private ImageView currentImageView;
 
-    public Cell(int x, int y, ImageView initialImageView) {
+    private double TILE_SIZE;
+    private double offsetX;
+    private double offsetY;
+
+    public Cell(int x, int y, ImageView initialImageView, double TILE_SIZE, double offsetX, double offsetY) {
         super();
         this.setX(x);
         this.setY(y);
         this.initialImageView = initialImageView;
         this.currentImageView = initialImageView;
+
+        this.TILE_SIZE = TILE_SIZE;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
 
     public double getLayoutX() {
