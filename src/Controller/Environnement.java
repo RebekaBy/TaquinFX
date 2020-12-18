@@ -2,6 +2,7 @@ package Controller;
 
 
 import View.Cell;
+import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
@@ -54,7 +55,6 @@ public class Environnement {
             plateau[p.getX()][p.getY()] = a;
 
         }
-        System.out.println(listeAgents.size());
     }
 
     public void runAgents(){
@@ -131,6 +131,10 @@ public class Environnement {
             default:
                 return new Position(p.getX()+1, p.getY());
         }
+    }
+
+    public Boolean isPositionInside(Position p){
+        return (p.getX() >= 0 || p.getX() < n || p.getY() >= 0 || p.getY() < n);
     }
 
     public ImageView getAgentImage(int x, int y){

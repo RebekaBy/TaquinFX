@@ -25,7 +25,7 @@ public class Main extends Application {
     private static double SCENE_HEIGHT = 500;
 
     private static int size = 5;
-    private static int nbAgents = 10;
+    private static int nbAgents = 5;
 
     //Dimension du taquin
     public static int TILE_ROW_COUNT = size;
@@ -123,7 +123,7 @@ public class Main extends Application {
         primaryStage.show();
 
 
-//        e.runAgents();
+        e.runAgents();
     }
 
     /**
