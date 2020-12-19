@@ -100,6 +100,11 @@ public class Noeud implements Comparable{
                 y == noeud.y;
     }
 
+    public Boolean positionEquals(Noeud n){
+        return x == n.x &&
+                y == n.y;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(x, y, heuristique, cout);

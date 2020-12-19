@@ -164,7 +164,7 @@ public class Environnement {
     }
 
     public Boolean isPositionInside(Position p){
-        return (p.getX() >= 0 || p.getX() < n || p.getY() >= 0 || p.getY() < n);
+        return (p.getX() >= 0 && p.getX() < n && p.getY() >= 0 && p.getY() < n);
     }
 
     public ImageView getAgentImage(int x, int y){

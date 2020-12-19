@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.SortedSet;
+import java.util.concurrent.Semaphore;
 
 public class Agent extends Thread{
     private Environnement e;
@@ -21,6 +22,7 @@ public class Agent extends Thread{
     private Queue<Message> boiteAuxLettres;
     private Cell cell;
     private Boolean bouge;
+    private Semaphore semaphore;
 
 
     public Agent(int id, Environnement e, Position positionCurrent, Position positionFinal, Cell c) {
@@ -28,10 +30,11 @@ public class Agent extends Thread{
         this.id = id;
         this.positionCurrent = positionCurrent;
         this.positionFinal = positionFinal;
-        date= 0;
+        date= 1;
         boiteAuxLettres = new LinkedList<>();
         this.cell = c;
         bouge = false;
+        semaphore = new Semaphore(1);
     }
 
     /*
@@ -41,6 +44,7 @@ public class Agent extends Thread{
     public void seDeplacer() {
 //        System.out.println("Agent " + id + " - Iteration : " + date + " - Deplace ! ");
         e.deplacer(this, d);
+        clearBoite();
 
     }
 
@@ -50,6 +54,7 @@ public class Agent extends Thread{
     }
 
     public void envoyerMessage(Agent a){
+        System.out.println("envoyer message");
         a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
     }
 
@@ -89,18 +94,22 @@ public class Agent extends Thread{
         Astar as = new Astar();
         Position astarNextPosition = as.cheminPlusCourt(e, this, true);
         if(astarNextPosition.equals(positionCurrent)){
+
             astarNextPosition = as.cheminPlusCourt(e, this, false);
             Agent a = e.getContent(astarNextPosition);
             if(a != null){
+//                System.out.println("envoie message");
                 envoyerMessage(a);
+                return null;
             }
-            return null;
+//            System.out.println("return null");
+            return astarNextPosition;
         }
         return astarNextPosition;
     }
 
     public void decider(){
-        boiteAuxLettres = new LinkedList<>();
+        System.out.println(id + " - " + positionCurrent + " - Direction " + d );
 
         if(d != null){
             Agent content = e.getContent(this, d);
@@ -111,38 +120,33 @@ public class Agent extends Thread{
                 envoyerMessage(content);
             }
         }
-//        System.out.println("decider");
-//        if(isPlacedGood()){
-////            System.out.println("Agent " + id + " - Iteration : " + date + " - Bien place ! ");
-//            Position tmpPosition = lireMessages();
-//            if(tmpPosition == null){
-//                d = null;
-//            }else{
-//                Agent a = e.getContent(tmpPosition);
-//                if(a != null){
-//                    a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
-//                    d = null;
-//                }else{
-//                    d = findDirection(tmpPosition);
-//                }
-//            }
-//        }else{
-//            d = raisonner();
-//        }
-//        boiteAuxLettres = new LinkedList<>();
-////        System.out.println(d);
-//        if(d != null){
-//            seDeplacer();
-//        }
     }
 
     public Direction lireMessages(){
-        for(Message m : boiteAuxLettres){
-            if(m.getAction().equals("Move")){
-                return findCaseVoisine(m.getEmmeteur());
+        try {
+            semaphore.acquire();
+            for(Message m : boiteAuxLettres){
+                if(m.getAction().equals("Move")){
+                    semaphore.release();
+                    return findCaseVoisine(m.getEmmeteur());
+                }
             }
+            boiteAuxLettres = new LinkedList<>();
+            semaphore.release();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
         return null;
+    }
+
+    public void clearBoite(){
+        try {
+            semaphore.acquire();
+            boiteAuxLettres = new LinkedList<>();
+            semaphore.release();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public Direction findCaseVoisine(Agent a){
@@ -159,7 +163,7 @@ public class Agent extends Thread{
         for(Direction direction: Direction.values()){
 //            tmpPosition = e.calcPosition(positionCurrent, direction);
             agentCible = e.getContent(this, direction);
-            if(!agentCible.equals(a)) {
+            if(agentCible != null && !agentCible.equals(a)) {
                 if (!agentCible.isPlacedGood()) {
                     return direction;
                 }
@@ -170,7 +174,7 @@ public class Agent extends Thread{
         Direction rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
 //        tmpPosition = e.calcPosition(positionCurrent, rand);;
         agentCible = e.getContent(this, rand);
-        while(!isCaseDisponible(this, rand) && !agentCible.equals(a)){
+        while(agentCible == null || (!isCaseDisponible(this, rand) && !agentCible.equals(a))){
             rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
 //            tmpPosition = e.calcPosition(positionCurrent, rand);;
         }
@@ -199,7 +203,7 @@ public class Agent extends Thread{
             decider();
             date++;
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (InterruptedException interruptedException) {
                 interruptedException.printStackTrace();
             }
@@ -240,7 +244,13 @@ public class Agent extends Thread{
     }
 
     public void addBoiteAuxLettres(Message m){
-        boiteAuxLettres.add(m);
+        try {
+            semaphore.acquire();
+            boiteAuxLettres.add(m);
+            semaphore.release();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public int getDate() {

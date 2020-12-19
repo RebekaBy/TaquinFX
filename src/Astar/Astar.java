@@ -37,10 +37,10 @@ public class Astar {
 //            System.out.println(openList.size());
             Collections.sort(openList);
             u = openList.get(openList.size()-1);
-            openList.remove(u);
-            if(u.equals(objectif)){
+            if(u.positionEquals(objectif)){
                 return reconstituerChemin(u);
             }
+            openList.remove(u);
             for(Noeud v : getVoisins(u)){
                 if(v != null){
                     if(!closedList.contains(v)) {
