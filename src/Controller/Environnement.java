@@ -56,7 +56,13 @@ public class Environnement {
                 p = new Position(r.nextInt(n), r.nextInt(n));
             }
             pFinal = new Position(i%n, i/n);
-            a = new Agent(i, this, p, pFinal, cells.get(i));
+            Cell agentCell = cells.get(0);
+            for(Cell c: cells){
+                if(c.getX() == pFinal.getX() && c.getY() == pFinal.getY()){
+                    agentCell = c;
+                }
+            }
+            a = new Agent(i, this, p, pFinal, agentCell);
             listeAgents.add(a);
             plateau[p.getX()][p.getY()] = a;
 
@@ -81,12 +87,18 @@ public class Environnement {
                 semaphore.release();
                 return null;
             }
+            Agent content = plateau[p.getX()][p.getY()];
             semaphore.release();
-            return plateau[p.getX()][p.getY()];
+            return content;
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Agent getContent(Agent a, Direction d){
+        Position p = calcPosition(a.getPositionCurrent(), d);
+        return getContent(p);
     }
 
     public int getN() {
@@ -121,6 +133,8 @@ public class Environnement {
             Position newP = calcPosition(p,d);
 
             a.setPositionCurrent(newP);
+
+            System.out.println("Deplacement agent : " + a.gettId() + " - iteration : " + a.getDate() + " pInit : " + p + " - Direction : " + d + " - pNew : " + newP);
 
             plateau[newP.getX()][newP.getY()] = a;
             Platform.runLater(new Runnable() {

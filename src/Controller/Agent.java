@@ -20,6 +20,7 @@ public class Agent extends Thread{
     private Position positionCurrent, positionFinal;
     private Queue<Message> boiteAuxLettres;
     private Cell cell;
+    private Boolean bouge;
 
 
     public Agent(int id, Environnement e, Position positionCurrent, Position positionFinal, Cell c) {
@@ -30,15 +31,17 @@ public class Agent extends Thread{
         date= 0;
         boiteAuxLettres = new LinkedList<>();
         this.cell = c;
+        bouge = false;
     }
 
     /*
     Après avoir trouver la case grâce à raisonner ET après avoir vérifier si la case est libre,
     on se déplace vers la case choisie
     */
-    public void seDeplacer(){
-        System.out.println("Agent " + id + " - Iteration : " + date + " - Deplace ! ");
+    public void seDeplacer() {
+//        System.out.println("Agent " + id + " - Iteration : " + date + " - Deplace ! ");
         e.deplacer(this, d);
+
     }
 
     //Observe l'environnement (en haut, à droite, à gauche,
@@ -46,52 +49,94 @@ public class Agent extends Thread{
 
     }
 
+    public void envoyerMessage(Agent a){
+        a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
+    }
+
     //TODO LOUIS AVEC A*
     // Utilisation de A* pour savoir quel est le meilleur chemin pour aller à la position final
-    public Direction raisonner(){
+//    public Direction raisonner(){
 //        System.out.println("raisonner");
-        Astar as = new Astar();
-        Position nextPosition = as.cheminPlusCourt(e, this, true);
-        if(nextPosition.equals(positionCurrent)){
-            nextPosition = as.cheminPlusCourt(e, this, false);
-            Agent a = e.getContent(nextPosition);
-            if(a != null){
-                a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
+//        Astar as = new Astar();
+//        Position nextPosition = as.cheminPlusCourt(e, this, true);
+//        if(nextPosition.equals(positionCurrent)){
+//            nextPosition = as.cheminPlusCourt(e, this, false);
+//            Agent a = e.getContent(nextPosition);
+//            if(a != null){
+//                a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
+//            }
+//        }
+//        else{
+//            return findDirection(nextPosition);
+//        }
+//        return null;
+//    }
+
+    public void raisonner(){
+        if(d == null){
+            if(isPlacedGood()){
+                d = lireMessages();
+            }else{
+                d = findDirection(getAstarNextPosition());
+                if(d == null){
+                    d = lireMessages();
+                }
             }
         }
-        else{
-            return findDirection(nextPosition);
+    }
+
+    public Position getAstarNextPosition(){
+        Astar as = new Astar();
+        Position astarNextPosition = as.cheminPlusCourt(e, this, true);
+        if(astarNextPosition.equals(positionCurrent)){
+            astarNextPosition = as.cheminPlusCourt(e, this, false);
+            Agent a = e.getContent(astarNextPosition);
+            if(a != null){
+                envoyerMessage(a);
+            }
+            return null;
         }
-        return null;
+        return astarNextPosition;
     }
 
     public void decider(){
-//        System.out.println("decider");
-        if(isPlacedGood()){
-//            System.out.println("Agent " + id + " - Iteration : " + date + " - Bien place ! ");
-            Position tmpPosition = lireMessages();
-            if(tmpPosition == null){
+        boiteAuxLettres = new LinkedList<>();
+
+        if(d != null){
+            Agent content = e.getContent(this, d);
+            if (content == null) {
+                seDeplacer();
                 d = null;
             }else{
-                Agent a = e.getContent(tmpPosition);
-                if(a != null){
-                    a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
-                    d = null;
-                }else{
-                    d = findDirection(tmpPosition);
-                }
+                envoyerMessage(content);
             }
-        }else{
-            d = raisonner();
         }
-        boiteAuxLettres = new LinkedList<>();
-//        System.out.println(d);
-        if(d != null){
-            seDeplacer();
-        }
+//        System.out.println("decider");
+//        if(isPlacedGood()){
+////            System.out.println("Agent " + id + " - Iteration : " + date + " - Bien place ! ");
+//            Position tmpPosition = lireMessages();
+//            if(tmpPosition == null){
+//                d = null;
+//            }else{
+//                Agent a = e.getContent(tmpPosition);
+//                if(a != null){
+//                    a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
+//                    d = null;
+//                }else{
+//                    d = findDirection(tmpPosition);
+//                }
+//            }
+//        }else{
+//            d = raisonner();
+//        }
+//        boiteAuxLettres = new LinkedList<>();
+////        System.out.println(d);
+//        if(d != null){
+//            seDeplacer();
+//        }
     }
 
-    public Position lireMessages(){
+    public Direction lireMessages(){
         for(Message m : boiteAuxLettres){
             if(m.getAction().equals("Move")){
                 return findCaseVoisine(m.getEmmeteur());
@@ -100,25 +145,40 @@ public class Agent extends Thread{
         return null;
     }
 
-    public Position findCaseVoisine(Agent a){
-        Position tmpPosition;
+    public Direction findCaseVoisine(Agent a){
+//        Position tmpPosition;
+        //cherche un case libre parmis les caes voisines
         for(Direction direction: Direction.values()){
-            tmpPosition = e.calcPosition(positionCurrent, direction);
-            if(isCaseDisponible(tmpPosition, a)){
-                return tmpPosition;
+//            tmpPosition = e.calcPosition(positionCurrent, direction);
+            if(isCaseDisponible(this, direction)){
+                return direction;
+            }
+        }
+        Agent agentCible;
+        //cherche un agent mal placé parmis les agents voisins
+        for(Direction direction: Direction.values()){
+//            tmpPosition = e.calcPosition(positionCurrent, direction);
+            agentCible = e.getContent(this, direction);
+            if(!agentCible.equals(a)) {
+                if (!agentCible.isPlacedGood()) {
+                    return direction;
+                }
             }
         }
 
+        //retourne un agent au pif
         Direction rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
-        tmpPosition = e.calcPosition(positionCurrent, rand);;
-        while(!isCaseDisponible(tmpPosition, a)){
+//        tmpPosition = e.calcPosition(positionCurrent, rand);;
+        agentCible = e.getContent(this, rand);
+        while(!isCaseDisponible(this, rand) && !agentCible.equals(a)){
             rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
-            tmpPosition = e.calcPosition(positionCurrent, rand);;
+//            tmpPosition = e.calcPosition(positionCurrent, rand);;
         }
-        return tmpPosition;
+        return rand;
     }
 
-    public Boolean isCaseDisponible(Position p, Agent a){
+    public Boolean isCaseDisponible(Agent a, Direction d){
+        Position p = e.calcPosition(a.getPositionCurrent(), d);
         if(!e.isPositionInside(p)){
             return false;
         }
@@ -134,11 +194,12 @@ public class Agent extends Thread{
         while(!e.isTaquinOk()){
 
 //            System.out.println("Agent " + id + " - Iteration : " + date);
-            d = null;
+//            decider();
+            raisonner();
             decider();
             date++;
             try {
-                Thread.sleep(50);
+                Thread.sleep(100);
             } catch (InterruptedException interruptedException) {
                 interruptedException.printStackTrace();
             }
@@ -146,7 +207,7 @@ public class Agent extends Thread{
     }
 
     public Direction findDirection(Position p){
-        if(p.equals(positionCurrent)){
+        if(p == null || p.equals(positionCurrent)){
             return null;
         }
         if(p.getX() < positionCurrent.getX()){
@@ -228,5 +289,10 @@ public class Agent extends Thread{
 
     public Cell getCell() {
         return cell;
+    }
+
+
+    public int gettId() {
+        return id;
     }
 }

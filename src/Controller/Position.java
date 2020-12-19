@@ -44,4 +44,10 @@ public class Position {
     public String toJson(){
         return "{\"x\":" + x + ", \"y\":" + y + "}";
     }
+
+    @Override
+    public String toString() {
+        return  "x=" + x +
+                ", y=" + y;
+    }
 }

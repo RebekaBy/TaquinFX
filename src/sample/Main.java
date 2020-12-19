@@ -25,8 +25,8 @@ public class Main extends Application {
     private static double SCENE_WIDTH = 500;
     private static double SCENE_HEIGHT = 500;
 
-    private static int size = 3;
-    private static int nbAgents = 1;
+    private static int size = 4;
+    private static int nbAgents = 7;
 
     private static int ImageSize = 500;
 

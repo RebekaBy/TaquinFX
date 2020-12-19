@@ -29,13 +29,14 @@ public class Astar {
         objectif = new Noeud(a.getPositionFinal(), 0, 0);
 
         Queue<Noeud> closedList = new LinkedList<>();
-        SortedSet<Noeud> openList = new TreeSet<>();
+        List<Noeud> openList = new ArrayList<>();
         openList.add(new Noeud(a.getPositionCurrent(), objectif, 0));
         Noeud u;
 
         while (!openList.isEmpty()){
 //            System.out.println(openList.size());
-            u = openList.first();
+            Collections.sort(openList);
+            u = openList.get(openList.size()-1);
             openList.remove(u);
             if(u.equals(objectif)){
                 return reconstituerChemin(u);
@@ -85,7 +86,7 @@ public class Astar {
 
 
 //vérifie si l'agent existe dans la liste avec un cout plus faible
-    public boolean existInWithLowerCost(SortedSet<Noeud> openList, Noeud n){
+    public boolean existInWithLowerCost(List<Noeud> openList, Noeud n){
         if(openList.contains(n)){
             for(Noeud row : openList){
                 if(row.equals(n)){
