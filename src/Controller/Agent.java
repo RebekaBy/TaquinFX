@@ -54,7 +54,7 @@ public class Agent extends Thread{
     }
 
     public void envoyerMessage(Agent a){
-        System.out.println("envoyer message");
+//        System.out.println("envoyer message");
         a.addBoiteAuxLettres(new Message(this, "Request", a.getDate(), "Move", ""));
     }
 
@@ -109,7 +109,7 @@ public class Agent extends Thread{
     }
 
     public void decider(){
-        System.out.println(id + " - " + positionCurrent + " - Direction " + d );
+//        System.out.println(id + " - " + positionCurrent + " - Direction " + d );
 
         if(d != null){
             Agent content = e.getContent(this, d);
@@ -151,24 +151,24 @@ public class Agent extends Thread{
 
     public Direction findCaseVoisine(Agent a){
 //        Position tmpPosition;
-//        //cherche un case libre parmis les caes voisines
-//        for(Direction direction: Direction.values()){
-////            tmpPosition = e.calcPosition(positionCurrent, direction);
-//            if(isCaseDisponible(this, direction)){
-//                return direction;
-//            }
-//        }
+        //cherche un case libre parmis les caes voisines
+        for(Direction direction: Direction.values()){
+//            tmpPosition = e.calcPosition(positionCurrent, direction);
+            if(isCaseDisponible(this, direction)){
+                return direction;
+            }
+        }
         Agent agentCible;
         //cherche un agent mal placé parmis les agents voisins
-//        for(Direction direction: Direction.values()){
-////            tmpPosition = e.calcPosition(positionCurrent, direction);
-//            agentCible = e.getContent(this, direction);
-//            if(agentCible != null && !agentCible.equals(a)) {
-//                if (!agentCible.isPlacedGood()) {
-//                    return direction;
-//                }
-//            }
-//        }
+        for(Direction direction: Direction.values()){
+//            tmpPosition = e.calcPosition(positionCurrent, direction);
+            agentCible = e.getContent(this, direction);
+            if(agentCible != null && !agentCible.equals(a)) {
+                if (!agentCible.isPlacedGood()) {
+                    return direction;
+                }
+            }
+        }
 
         //retourne un agent au pif
         Direction rand;
