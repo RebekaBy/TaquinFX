@@ -81,19 +81,19 @@ public class Environnement {
     }
 
     public Agent getContent(Position p){
-        try {
-            semaphore.acquire();
+//        try {
+//            semaphore.acquire();
             if(p.getX() < 0 || p.getX() >= n || p.getY() < 0 || p.getY() >= n){
                 semaphore.release();
                 return null;
             }
             Agent content = plateau[p.getX()][p.getY()];
-            semaphore.release();
+//            semaphore.release();
             return content;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
     }
 
     public Agent getContent(Agent a, Direction d){
@@ -106,26 +106,26 @@ public class Environnement {
     }
 
     public boolean isTaquinOk(){
-        try {
-            semaphore.acquire();
+//        try {
+//            semaphore.acquire();
             for(Agent a: listeAgents){
                 if(!a.isPlacedGood()){
-                    semaphore.release();
+//                    semaphore.release();
                     return false;
                 }
             }
             System.out.println("OKTAQUINOK");
-            semaphore.release();
+//            semaphore.release();
             return true;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        return false;
     }
 
     public void deplacer(Agent a, Direction d){
-        try {
-            semaphore.acquire();
+//        try {
+//            semaphore.acquire();
             Position p = a.getPositionCurrent();
 
             plateau[p.getX()][p.getY()] = null;
@@ -143,10 +143,10 @@ public class Environnement {
                     app.updateView();
                 }
             });
-            semaphore.release();
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
+//            semaphore.release();
+//    } catch (InterruptedException e) {
+//        e.printStackTrace();
+//    }
     }
 
     //Détermine la position de l'agent apres déplacement dans la direction
@@ -172,5 +172,17 @@ public class Environnement {
             return null;
         }
         return plateau[x][y].getCell().getImageView();
+    }
+
+    public void semaphoreAcquire(){
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void semaphoneRelease(){
+        semaphore.release();
     }
 }

@@ -229,8 +229,10 @@ public class Agent extends Thread{
             System.out.println("Agent " + id + " - Iteration : " + date + " - debut");
 //            decider();
 
+            e.semaphoreAcquire();
             raisonner();
             decider();
+            e.semaphoneRelease();
             date++;
             System.out.println("Agent " + id + " - Iteration : " + date + " - fin");
 
