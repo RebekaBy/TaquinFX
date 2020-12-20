@@ -96,8 +96,11 @@ public class Main extends Application {
         // BOTTOM
         Button btnPlay = new Button("Play");
         btnPlay.setPadding(new Insets(5, 5, 5, 5));
+        btnPlay.setId("play");
+        //btnPlay.setStyle("-fx-font: 22 arial; -fx-base: #b6e7c9;");
+        btnPlay.setMaxSize(100,200);
+        Scene scene1 = new Scene(btnPlay, 200, 100);
 
-        Scene scene1 = new Scene(btnPlay, SCENE_WIDTH, SCENE_HEIGHT);
         primaryStage.setScene(scene1);
         primaryStage.show();
 
