@@ -3,6 +3,7 @@ package Controller;
 
 import Astar.Astar;
 import View.Cell;
+import javafx.geometry.Pos;
 
 import java.security.PrivateKey;
 import java.util.LinkedList;
@@ -84,7 +85,10 @@ public class Agent extends Thread{
             }else{
                 d = findDirection(getAstarNextPosition());
                 if(d == null){
+                    System.out.println("Agent " + id + " - Iteration : " + date + " lis message");
+
                     d = lireMessages();
+                    System.out.println("Agent " + id + " - Iteration : " + date + " direcrtion  " + d);
                 }
             }
         }
@@ -98,7 +102,7 @@ public class Agent extends Thread{
             astarNextPosition = as.cheminPlusCourt(e, this, false);
             Agent a = e.getContent(astarNextPosition);
             if(a != null){
-//                System.out.println("envoie message");
+                System.out.println("Agent " + id + " - Iteration : " + date + " envoie message");
                 envoyerMessage(a);
                 return null;
             }
@@ -152,23 +156,23 @@ public class Agent extends Thread{
     public Direction findCaseVoisine(Agent a){
 //        Position tmpPosition;
         //cherche un case libre parmis les caes voisines
-        for(Direction direction: Direction.values()){
-//            tmpPosition = e.calcPosition(positionCurrent, direction);
-            if(isCaseDisponible(this, direction)){
-                return direction;
-            }
-        }
+//        for(Direction direction: Direction.values()){
+////            tmpPosition = e.calcPosition(positionCurrent, direction);
+//            if(isCaseDisponible(this, direction)){
+//                return direction;
+//            }
+//        }
         Agent agentCible;
         //cherche un agent mal placé parmis les agents voisins
-        for(Direction direction: Direction.values()){
-//            tmpPosition = e.calcPosition(positionCurrent, direction);
-            agentCible = e.getContent(this, direction);
-            if(agentCible != null && !agentCible.equals(a)) {
-                if (!agentCible.isPlacedGood()) {
-                    return direction;
-                }
-            }
-        }
+//        for(Direction direction: Direction.values()){
+////            tmpPosition = e.calcPosition(positionCurrent, direction);
+//            agentCible = e.getContent(this, direction);
+//            if(agentCible != null && !agentCible.equals(a)) {
+//                if (!agentCible.isPlacedGood()) {
+//                    return direction;
+//                }
+//            }
+//        }
 
         //retourne un agent au pif
         Direction rand;
@@ -190,6 +194,20 @@ public class Agent extends Thread{
         }
         while(!directionOk);
         return rand;
+//        Position tmpP;
+//        for(Direction direction: Direction.values()){
+//            tmpP = e.calcPosition(positionCurrent, direction);
+//            if(e.isPositionInside(tmpP)){
+//                if(e.getContent(tmpP) == null){
+//                    return direction;
+//                }
+//                if(!e.getContent(tmpP).equals(a)){
+//                    return direction;
+//                }
+//            }
+//        }
+//        System.out.println("return null");
+//        return null;
     }
 
     public Boolean isCaseDisponible(Agent a, Direction d){
@@ -208,11 +226,14 @@ public class Agent extends Thread{
     public void run() {
         while(!e.isTaquinOk()){
 
-//            System.out.println("Agent " + id + " - Iteration : " + date);
+            System.out.println("Agent " + id + " - Iteration : " + date + " - debut");
 //            decider();
+
             raisonner();
             decider();
             date++;
+            System.out.println("Agent " + id + " - Iteration : " + date + " - fin");
+
             try {
                 Thread.sleep(50);
             } catch (InterruptedException interruptedException) {
@@ -226,15 +247,15 @@ public class Agent extends Thread{
             return null;
         }
         if(p.getX() < positionCurrent.getX()){
-            return Direction.N;
+            return Direction.O;
         }
         if(p.getX() > positionCurrent.getX()){
-            return Direction.S;
+            return Direction.E;
         }
         if(p.getY() < positionCurrent.getY()){
-            return Direction.O;
+            return Direction.N;
         }else{
-            return Direction.E;
+            return Direction.S;
         }
     }
 

@@ -152,14 +152,14 @@ public class Environnement {
     //Détermine la position de l'agent apres déplacement dans la direction
     public Position calcPosition(Position p, Direction d){
         switch (d){
-            case E:
-                return new Position(p.getX(), p.getY()+1);
             case O:
-                return new Position(p.getX(), p.getY()-1);
-            case N:
                 return new Position(p.getX()-1, p.getY());
-            default:
+            case E:
                 return new Position(p.getX()+1, p.getY());
+            case N:
+                return new Position(p.getX(), p.getY()-1);
+            default:
+                return new Position(p.getX(), p.getY()+1);
         }
     }
 
