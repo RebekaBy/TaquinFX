@@ -32,7 +32,7 @@ public class Main extends Application {
     private static double SCENE_HEIGHT = 500;
 
     private static int size = 4;
-    private static int nbAgents = 8;
+    private static int nbAgents = 7;
 
     private static int ImageSize = 500;
 
@@ -133,11 +133,6 @@ public class Main extends Application {
 ////            }
 ////        });
 //
-//
-//
-//
-//
-//
 //        Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
 //        primaryStage.setScene(scene);
 //        primaryStage.setTitle("Taquin by BY & COUDURIER-CURVEUR");
@@ -146,7 +141,6 @@ public class Main extends Application {
 //        primaryStage.show();
 
         updateView();
-
 
         env.runAgents();
     }
