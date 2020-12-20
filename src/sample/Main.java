@@ -5,12 +5,18 @@ import Controller.Agent;
 import View.Cell;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -51,9 +57,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        //Parent root = FXMLLoader.load(getClass().getResource("board.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("board.fxml"));
 
         this.primaryStage = primaryStage;
+
 
         try {
             image = new Image(new FileInputStream(".\\img\\sda.png"), ImageSize, ImageSize, false,false);
@@ -145,7 +152,14 @@ public class Main extends Application {
     }
 
     public void updateView(){
-        Pane pane = new Pane();
+        BorderPane pane = new BorderPane();
+        pane.setPadding(new Insets(15, 20, 10, 10));
+        pane.setId("pane");
+
+        // BOTTOM
+        Button btnPlay = new Button("Play");
+        btnPlay.setPadding(new Insets(5, 5, 5, 5));
+        pane.setBottom(btnPlay);
 
         // put tiles on playfield, assign event handler
         for(int i = 0; i < size; i++){
@@ -160,7 +174,6 @@ public class Main extends Application {
 
             }
         }
-
 
         Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
         primaryStage.setScene(scene);
