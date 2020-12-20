@@ -151,33 +151,44 @@ public class Agent extends Thread{
 
     public Direction findCaseVoisine(Agent a){
 //        Position tmpPosition;
-        //cherche un case libre parmis les caes voisines
-        for(Direction direction: Direction.values()){
-//            tmpPosition = e.calcPosition(positionCurrent, direction);
-            if(isCaseDisponible(this, direction)){
-                return direction;
-            }
-        }
+//        //cherche un case libre parmis les caes voisines
+//        for(Direction direction: Direction.values()){
+////            tmpPosition = e.calcPosition(positionCurrent, direction);
+//            if(isCaseDisponible(this, direction)){
+//                return direction;
+//            }
+//        }
         Agent agentCible;
         //cherche un agent mal placé parmis les agents voisins
-        for(Direction direction: Direction.values()){
-//            tmpPosition = e.calcPosition(positionCurrent, direction);
-            agentCible = e.getContent(this, direction);
-            if(agentCible != null && !agentCible.equals(a)) {
-                if (!agentCible.isPlacedGood()) {
-                    return direction;
+//        for(Direction direction: Direction.values()){
+////            tmpPosition = e.calcPosition(positionCurrent, direction);
+//            agentCible = e.getContent(this, direction);
+//            if(agentCible != null && !agentCible.equals(a)) {
+//                if (!agentCible.isPlacedGood()) {
+//                    return direction;
+//                }
+//            }
+//        }
+
+        //retourne un agent au pif
+        Direction rand;
+        Boolean directionOk;
+//        tmpPosition = e.calcPosition(positionCurrent, rand);;
+        do {
+            rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
+            directionOk = false;
+            if(e.isPositionInside(e.calcPosition(positionCurrent, rand))) {
+                agentCible = e.getContent(this, rand);
+                if (agentCible == null) {
+                    directionOk = true;
+                } else {
+                    if (!agentCible.equals(a)) {
+                        directionOk = true;
+                    }
                 }
             }
         }
-
-        //retourne un agent au pif
-        Direction rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
-//        tmpPosition = e.calcPosition(positionCurrent, rand);;
-        agentCible = e.getContent(this, rand);
-        while(agentCible == null || (!isCaseDisponible(this, rand) && !agentCible.equals(a))){
-            rand = Direction.values()[(int)(Math.random()*Direction.values().length)];
-//            tmpPosition = e.calcPosition(positionCurrent, rand);;
-        }
+        while(!directionOk);
         return rand;
     }
 
