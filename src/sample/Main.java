@@ -5,6 +5,8 @@ import Controller.Agent;
 import View.Cell;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
@@ -91,8 +93,29 @@ public class Main extends Application {
         // shuffle cells
 //        shuffle();
 
+        // BOTTOM
+        Button btnPlay = new Button("Play");
+        btnPlay.setPadding(new Insets(5, 5, 5, 5));
+
+        Scene scene1 = new Scene(btnPlay, SCENE_WIDTH, SCENE_HEIGHT);
+        primaryStage.setScene(scene1);
+        primaryStage.show();
+
+        env = new Environnement(size, nbAgents, cells, this );
+        btnPlay.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+
+                updateView();
+
+
+                env.runAgents();
+            }
+        });
+
+
+
         //Itialisation de l'environnement
-        env = new Environnement(size, nbAgents, cells, this);
+
 
         // create playfield
 //        Pane pane = new Pane();
@@ -133,6 +156,11 @@ public class Main extends Application {
 ////            }
 ////        });
 //
+//
+//
+//
+//
+//
 //        Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
 //        primaryStage.setScene(scene);
 //        primaryStage.setTitle("Taquin by BY & COUDURIER-CURVEUR");
@@ -140,9 +168,9 @@ public class Main extends Application {
 //
 //        primaryStage.show();
 
-        updateView();
 
-        env.runAgents();
+
+
     }
 
     public void updateView(){
@@ -150,10 +178,7 @@ public class Main extends Application {
         pane.setPadding(new Insets(15, 20, 10, 10));
         pane.setId("pane");
 
-        // BOTTOM
-        Button btnPlay = new Button("Play");
-        btnPlay.setPadding(new Insets(5, 5, 5, 5));
-        pane.setBottom(btnPlay);
+
 
         // put tiles on playfield, assign event handler
         for(int i = 0; i < size; i++){
